@@ -1,7 +1,13 @@
 .search-city {
-  background-color: aqua;
+  background-color: rgb(175, 235, 235);
 }
 
 .current-city {
-  background-color: burlywood;
+  background-color: rgb(197, 190, 181);
+}
+
+.header {
+  background-color: cadetblue;
+  text-align: center;
+  padding: 8px;
 }
