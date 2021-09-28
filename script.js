@@ -58,18 +58,6 @@ forecastDay5El.append(forecastDay5Wind);
 var forecastDay5Humidity = $("<li>");
 forecastDay5El.append(forecastDay5Humidity);
 
-//BEFORE ASKING BCS FOR HELP
-// var recentSearch1El = $(".recent-search1");
-// var recentSearch2El = $(".recent-search2");
-// var recentSearch3El = $(".recent-search3");
-// var recentSearch4El = $(".recent-search4");
-// var recentSearch5El = $(".recent-search5");
-// recentSearch1El.text("");
-// recentSearch2El.text("");
-// recentSearch3El.text("");
-// recentSearch4El.text("");
-// recentSearch5El.text("");
-
 //Declaring global variables which will be assigned values in the function.
 // city user looks up
 var inputCityName;
@@ -87,27 +75,22 @@ var cityHumidity;
 var cityMainWeather;
 
 //Accessing the API information for daily and five-day-forecast.
-function searchCityName(event) {
-  event.preventDefault();
-  inputCityName = inputCityNameEl.val();
+function searchCityName(inputCityName) {
   dailyWeatherByCity =
     "https://api.openweathermap.org/data/2.5/weather?q=" +
     inputCityName +
     "&units=imperial&appid=d2f7b3d6eee0ac3947469a9d38562aa3";
+
   fiveDayForecast =
     "https://api.openweathermap.org/data/2.5/forecast?q=" +
     inputCityName +
     "&units=imperial&appid=d2f7b3d6eee0ac3947469a9d38562aa3";
-
-  //Searchbox starts empty.
-  inputCityNameEl.text("");
 
   //Current Weather.
   $.ajax({
     url: dailyWeatherByCity,
     method: "GET",
   }).then(function (data) {
-    localStorage.setItem(inputCityName, "weather");
     //Today's date from 'moment.'
     mainCardTextEl.text(today);
     inputCityName = inputCityName.toUpperCase();
@@ -172,39 +155,28 @@ function searchCityName(event) {
       forecastDay5Wind.text("Wind: " + cityWind + " mph");
       cityHumidity = data.list[39].main.humidity;
       forecastDay5Humidity.text("Humidity: " + cityHumidity + "%");
-    })
-    .then(function () {
-      //BCS RECOMMENDATION FOR RECENT SEARCHES:
-      recentSearches.append($(`<li><a href="#">${inputCityName}</a></li>`));
-
-      //MY ORIGINAL CODE
-      // if (recentSearch5El.val() === "") {
-      //   recentSearch5El.text(inputCityName);
-      // } else if (recentSearch5El.val() !== "") {
-      //   recentSearch4El.text(inputCityName);
-      // } else if (recentSearch4El.val() === "") {
-      //   recentSearch4El.text(inputCityName);
-      // } else if (recentSearch4El.val() !== "") {
-      //   recentSearch3El.text(inputCityName);
-      // } else if (recentSearch3El.val() === "") {
-      //   recentSearch3El.text(inputCityName);
-      // } else if (recentSearch3El.val() !== "") {
-      //   recentSearch2El.text(inputCityName);
-      // } else if (recentSearch2El.val() === "") {
-      //   recentSearch2El.text(inputCityName);
-      // } else if (recentSearch2El.val() !== "") {
-      //   recentSearch1El.text(inputCityName);
-      // } else if (recentSearch1El.val() === "") {
-      //   recentSearch1El.text(inputCityName);
-      // } else if (recentSearch1El.val() !== "") {
-      //   recentSearch5El.text(recentSearch4El.val());
-      //   recentSearch4El.text(recentSearch3El.val());
-      //   recentSearch3El.text(recentSearch2El.val());
-      //   recentSearch2El.text(recentSearch1El.val());
-      //   recentSearch1El.text(inputCityName);
-      // }
     });
 }
 
+function addRecent(inputCityName) {
+  recentSearches.append($(`<li><a href="#"> ${inputCityName}</a></li>`));
+}
+
+function handleSearch(event) {
+  event.preventDefault();
+  inputCityName = inputCityNameEl.val();
+  searchCityName(inputCityName);
+  addRecent(inputCityName);
+  inputCityNameEl.text(" ");
+}
+
+function handleRecent(event) {
+  event.preventDefault();
+  var citySearch = event.target.text;
+  searchCityName(citySearch);
+}
+
 //After the user clicks 'search,' the function runs.
-searchClickEl.on("click", searchCityName);
+searchClickEl.on("click", handleSearch);
+
+recentSearches.on("click", handleRecent);
